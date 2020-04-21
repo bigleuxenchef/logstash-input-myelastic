@@ -60,7 +60,7 @@ require "base64"
 # Further documentation describing this syntax can be found https://github.com/jmettraux/rufus-scheduler#parsing-cronlines-and-time-strings[here].
 #
 #
-class LogStash::Inputs::myelastic < LogStash::Inputs::Base
+class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
   config_name "myelastic"
 
   default :codec, "json"
