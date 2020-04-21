@@ -459,3 +459,5 @@ def decorate_value(value)
     value
   end
 end
+
+end
