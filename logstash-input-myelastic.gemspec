@@ -33,6 +33,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'manticore', "~> 0.6"
   s.add_runtime_dependency 'faraday', "~> 0.15.4"
 
-  s.add_development_dependency 'logstash-devutils',">= 1.0"
-  s.add_development_dependency 'timecop',">=1.3.6"
+  s.add_development_dependency 'logstash-devutils',">= 1.3.6"
+  s.add_development_dependency 'timecop'
 end
