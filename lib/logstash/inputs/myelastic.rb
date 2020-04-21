@@ -454,7 +454,7 @@ end
 #private
 #Stringify row keys and decorate values when necessary
 #def extract_values_from(row)
-  Hash[row.map { |k, v| [k.to_s, decorate_value(v)] }]
+#  Hash[row.map { |k, v| [k.to_s, decorate_value(v)] }]
 #end
 
 # private
