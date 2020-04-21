@@ -160,6 +160,25 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
   # There is no schedule by default. If no schedule is given, then the statement is run
   # exactly once.
   config :schedule, :validate => :string
+# inspired from jdbc plugin to record the last record processed.
+
+  # Path to file with last run time
+  config :last_run_metadata_path, :validate => :string, :default => "#{ENV['HOME']}/.logstash_jdbc_last_run"
+
+  # Use an incremental column value rather than a timestamp
+  config :use_column_value, :validate => :boolean, :default => false
+
+  # If tracking column value rather than timestamp, the column whose value is to be tracked
+  config :tracking_column, :validate => :string
+
+  # Type of tracking column. Currently only "numeric" and "timestamp"
+  config :tracking_column_type, :validate => ['numeric', 'timestamp'], :default => 'numeric'
+
+  # Whether the previous run state should be preserved
+  config :clean_run, :validate => :boolean, :default => false
+
+  # Whether to save state or not in last_run_metadata_path
+  config :record_last_run, :validate => :boolean, :default => true
 
   def register
     require "elasticsearch"
