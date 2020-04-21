@@ -182,6 +182,16 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
   # Whether to save state or not in last_run_metadata_path
   config :record_last_run, :validate => :boolean, :default => true
 
+ # Timezone conversion.
+      # SQL does not allow for timezone data in timestamp fields.  This plugin will automatically
+      # convert your SQL timestamp fields to Logstash timestamps, in relative UTC time in ISO8601 format.
+      #
+      # Using this setting will manually assign a specified timezone offset, instead
+      # of using the timezone setting of the local machine.  You must use a canonical
+      # timezone, *America/Denver*, for example.
+      config :jdbc_default_timezone, :validate => :string
+
+
   def register
     require "elasticsearch"
     require "rufus/scheduler"
