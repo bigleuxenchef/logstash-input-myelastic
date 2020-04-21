@@ -17,13 +17,13 @@ module LogStash module PluginMixins module Jdbc
         # use this irrespective of the jdbc_default_timezone setting
         NumericValueTracker.new(handler)
       else
-        if plugin.jdbc_default_timezone.nil? || plugin.jdbc_default_timezone.empty?
-          # no TZ stuff for Sequel, use Time
-          TimeValueTracker.new(handler)
-        else
+        # if plugin.jdbc_default_timezone.nil? || plugin.jdbc_default_timezone.empty?
+        #   # no TZ stuff for Sequel, use Time
+           TimeValueTracker.new(handler)
+        # else
           # Sequel does timezone handling on DateTime only
-          DateTimeValueTracker.new(handler)
-        end
+          #DateTimeValueTracker.new(handler)
+        # end
       end
     end
 
