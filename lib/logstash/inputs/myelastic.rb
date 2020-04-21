@@ -356,8 +356,9 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
     output_queue << event
 
 
-    sql_last_value = get_column_value(event) #if @use_column_value
+    #sql_last_value = get_column_value(event) #if @use_column_value
     #      yield extract_values_from(event)
+    sql_last_value = event.get(@tracking_column)
     @value_tracker.set_value(sql_last_value)
     @value_tracker.write
 
