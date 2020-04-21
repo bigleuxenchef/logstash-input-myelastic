@@ -4,6 +4,8 @@ require "logstash/namespace"
 require "logstash/json"
 require "logstash/util/safe_uri"
 require "base64"
+require "logstash/plugin_mixins/jdbc/jdbc"
+
 
 
 # .Compatibility Note
@@ -185,6 +187,16 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
     require "rufus/scheduler"
     require "elasticsearch/transport/transport/http/manticore"
 
+# added ER from jdbc
+    if @use_column_value
+      # Raise an error if @use_column_value is true, but no @tracking_column is set
+      if @tracking_column.nil?
+        raise(LogStash::ConfigurationError, "Must set :tracking_column if :use_column_value is true.")
+      end
+    end
+    set_value_tracker(LogStash::PluginMixins::Jdbc::ValueTracking.build_last_value_tracker(self))
+
+#########
     @options = {
       :index => @index,
       :scroll => @scroll,
@@ -279,6 +291,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
   end
 
   def do_run_slice(output_queue, slice_id=nil)
+
     slice_query = @base_query
     slice_query = slice_query.merge('slice' => { 'id' => slice_id, 'max' => @slices}) unless slice_id.nil?
 
@@ -307,6 +320,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
   end
 
   def push_hit(hit, output_queue)
+    sql_last_value = @use_column_value ? @value_tracker.value : Time.now.utc
     event = LogStash::Event.new(hit['_source'])
 
     if @docinfo
@@ -330,6 +344,13 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
     decorate(event)
 
     output_queue << event
+
+
+    sql_last_value = get_column_value(event) if @use_column_value
+          yield extract_values_from(event)
+    @value_tracker.set_value(sql_last_value)
+    @value_tracker.write
+
   end
 
   def scroll_request scroll_id
@@ -399,4 +420,42 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
     [ cloud_auth.username, cloud_auth.password ]
   end
 
+
+# added by ER inspired by jdbc
+def set_value_tracker(instance)
+  @value_tracker = instance
+end
+
+
+
+def get_column_value(row)
+  if !row.has_key?(@tracking_column.to_sym)
+    if !@tracking_column_warning_sent
+      @logger.warn("tracking_column not found in dataset.", :tracking_column => @tracking_column)
+      @tracking_column_warning_sent = true
+    end
+    # If we can't find the tracking column, return the current value in the ivar
+    @value_tracker.value
+  else
+    # Otherwise send the updated tracking column
+    row[@tracking_column.to_sym]
+  end
+end
+private
+#Stringify row keys and decorate values when necessary
+def extract_values_from(row)
+  Hash[row.map { |k, v| [k.to_s, decorate_value(v)] }]
+end
+
+private
+def decorate_value(value)
+  case value
+  when Time
+    # transform it to LogStash::Timestamp as required by LS
+    LogStash::Timestamp.new(value)
+  when Date, DateTime
+    LogStash::Timestamp.new(value.to_time)
+  else
+    value
+  end
 end
