@@ -16,15 +16,15 @@ module LogStash module PluginMixins module Jdbc
       # if plugin.use_column_value && plugin.tracking_column_type == "numeric"
       #   # use this irrespective of the jdbc_default_timezone setting
       #   NumericValueTracker.new(handler)
-      # else
-        # if plugin.jdbc_default_timezone.nil? || plugin.jdbc_default_timezone.empty?
-        #   # no TZ stuff for Sequel, use Time
+       else
+         if plugin.jdbc_default_timezone.nil? || plugin.jdbc_default_timezone.empty?
+           # no TZ stuff for Sequel, use Time
            TimeValueTracker.new(handler)
-        # else
+         else
           # Sequel does timezone handling on DateTime only
-          #DateTimeValueTracker.new(handler)
-        # end
-      # end
+          DateTimeValueTracker.new(handler)
+         end
+       end
     end
 
     attr_reader :value
