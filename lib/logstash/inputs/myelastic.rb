@@ -213,8 +213,9 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
       :scroll => @scroll,
       :size => @size
     }
-    # @query[':sql_value_last'] = @value_tracker.value
-    # logger.info("<<<<<< .  ER . >>>>>>> query value #{@query}")
+     logger.info("<<<<<< .  ER . >>>>>>> query value before #{@query}")
+     @query[':sql_value_last'] = @value_tracker.value
+     logger.info("<<<<<< .  ER . >>>>>>> query value after #{@query}")
  
     @base_query = LogStash::Json.load(@query)
     if @slices
