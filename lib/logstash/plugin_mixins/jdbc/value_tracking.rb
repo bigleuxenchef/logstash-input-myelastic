@@ -51,6 +51,7 @@ module LogStash module PluginMixins module Jdbc
       persisted = @file_handler.read
 
       if persisted && persisted.respond_to?(method_symbol)
+        logger.info("<<<<<< .  ER . >>>>>>>persisted #{persisted} ")
         @value = persisted
       else
         @file_handler.clean
