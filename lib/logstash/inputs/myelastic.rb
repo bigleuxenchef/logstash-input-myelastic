@@ -214,7 +214,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
       :size => @size
     }
      logger.info("<<<<<< .  ER . >>>>>>> query value before #{@query}")
-     @query[':sql_value_last'] = @value_tracker.value
+     @query[':sql_value_last'] = @value_tracker.value.to_s
      logger.info("<<<<<< .  ER . >>>>>>> query value after #{@query}")
  
     @base_query = LogStash::Json.load(@query)
