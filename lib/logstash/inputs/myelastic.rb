@@ -205,6 +205,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
       end
     end
     set_value_tracker(LogStash::PluginMixins::Jdbc::ValueTracking.build_last_value_tracker(self))
+    logger.info("<<<<<< .  ER . >>>>>>> in build_last_value_tracker #{@value_tracker.value}")
 
 #########
     @options = {
@@ -331,6 +332,8 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
 
   def push_hit(hit, output_queue)
     sql_last_value = @use_column_value ? @value_tracker.value : Time.now.utc
+
+    logger.info("<<<<< EEEERRRRR>>>>>>> value tracker : #{sql_last_value}")
     event = LogStash::Event.new(hit['_source'])
 
     if @docinfo

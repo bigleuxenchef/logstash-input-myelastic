@@ -5,7 +5,6 @@ module LogStash module PluginMixins module Jdbc
   class ValueTracking
 
     def self.build_last_value_tracker(plugin)
-      logger.info("<<<<<< .  ER . >>>>>>> in build_last_value_tracker")
       handler = plugin.record_last_run ? FileHandler.new(plugin.last_run_metadata_path) : NullFileHandler.new(plugin.last_run_metadata_path)
       if plugin.record_last_run
         handler = FileHandler.new(plugin.last_run_metadata_path)
@@ -50,8 +49,6 @@ module LogStash module PluginMixins module Jdbc
     private
     def common_set_initial(method_symbol, default)
       persisted = @file_handler.read
-      logger.info("<<<<<< .  ER . >>>>>>>persisted #{persisted} ")
-
       if persisted && persisted.respond_to?(method_symbol)
         @value = persisted
       else
