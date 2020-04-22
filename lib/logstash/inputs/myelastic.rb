@@ -318,6 +318,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
     r = search_request(slice_options)
 
     r['hits']['hits'].each { |hit| push_hit(hit, output_queue) }
+    @value_tracker.write
     logger.debug("Slice progress", slice_id: slice_id, slices: @slices) unless slice_id.nil?
 
     has_hits = r['hits']['hits'].any?
@@ -326,6 +327,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
       r = process_next_scroll(output_queue, r['_scroll_id'])
       logger.debug("Slice progress", slice_id: slice_id, slices: @slices) unless slice_id.nil?
       has_hits = r['has_hits']
+      @value_tracker.write
     end
     logger.info("Slice complete", slice_id: slice_id, slices: @slices) unless slice_id.nil?
   end
@@ -337,7 +339,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
   end
 
   def push_hit(hit, output_queue)
-    sql_last_value = @use_column_value ? @value_tracker.value : Time.now.utc
+    # sql_last_value = @use_column_value ? @value_tracker.value : Time.now.utc
  
     event = LogStash::Event.new(hit['_source'])
 
@@ -369,7 +371,6 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
     sql_last_value = event.get(@tracking_column).to_iso8601
     # logger.info("<<<<<< .  ER . >>>>>>>sql_last_value #{sql_last_value} respond to to_iso8601 : #{sql_last_value.respond_to?(:to_iso8601)} timestamp : #{sql_last_value.respond_to?(:to_timestamp)} String :#{sql_last_value.respond_to?(:to_string)} numeric : #{sql_last_value.respond_to?(:to_numeric)}")
     @value_tracker.set_value(sql_last_value)
-    @value_tracker.write
 
   end
 
