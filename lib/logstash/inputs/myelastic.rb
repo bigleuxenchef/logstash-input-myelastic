@@ -367,7 +367,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
 
     #sql_last_value = get_column_value(event) #if @use_column_value
     #      yield extract_values_from(event)
-    sql_last_value = event.get(@tracking_column).iso8601
+    sql_last_value = event.get(@tracking_column).to_iso8601
     logger.info("<<<<<< .  ER . >>>>>>>sql_last_value #{sql_last_value} respond to time : #{sql_last_value.respond_to?(:to_time)} timestamp : #{sql_last_value.respond_to?(:to_timestamp)} String :#{sql_last_value.respond_to?(:to_string)} numeric : #{sql_last_value.respond_to?(:to_numeric)}")
     @value_tracker.set_value(sql_last_value)
     @value_tracker.write
