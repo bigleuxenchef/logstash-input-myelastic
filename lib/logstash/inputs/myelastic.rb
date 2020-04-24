@@ -88,6 +88,8 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
   # This allows you to set the maximum number of hits returned per scroll.
   config :size, :validate => :number, :default => 1000
 
+  # This allows you to set the maximum number of hits returned per scroll.
+  config :alive, :validate => :number, :default => "60"
   # This parameter controls the keepalive time in seconds of the scrolling
   # request and initiates the scrolling process. The timeout applies per
   # round trip (i.e. between the previous scroll request, to the next).
@@ -206,7 +208,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
     end
     set_value_tracker(LogStash::PluginMixins::Jdbc::ValueTracking.build_last_value_tracker(self))
     logger.info("<<<<<< .  ER . >>>>>>> in build_last_value_tracker #{@value_tracker.value.to_s}")
-
+    @starttime = Time.now
 #########
     @options = {
       :index => @index,
@@ -328,6 +330,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
       logger.debug("Slice progress", slice_id: slice_id, slices: @slices) unless slice_id.nil?
       has_hits = r['has_hits']
       @value_tracker.write
+      break if Time.now - @starttime > @alive
     end
     logger.info("Slice complete", slice_id: slice_id, slices: @slices) unless slice_id.nil?
   end
