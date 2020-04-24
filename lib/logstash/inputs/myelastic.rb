@@ -295,7 +295,6 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
   private
 
   def do_run(output_queue)
-    @starttime = Time.now
     # if configured to run a single slice, don't bother spinning up threads
     return do_run_slice(output_queue) if @slices.nil? || @slices <= 1
 
@@ -310,6 +309,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
   end
 
   def do_run_slice(output_queue, slice_id=nil)
+    starttime = Time.now
 
     slice_query = @base_query
     slice_query = slice_query.merge('slice' => { 'id' => slice_id, 'max' => @slices}) unless slice_id.nil?
@@ -330,7 +330,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
       logger.debug("Slice progress", slice_id: slice_id, slices: @slices) unless slice_id.nil?
       has_hits = r['has_hits']
       @value_tracker.write
-      break if Time.now - @starttime > @alive
+      break if Time.now - starttime > @alive
     end
     logger.info("Slice complete", slice_id: slice_id, slices: @slices) unless slice_id.nil?
   end
