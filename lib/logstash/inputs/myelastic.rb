@@ -215,16 +215,16 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
       :size => @size
     }
 
-    #     LogStash::Timestamp.new(value)
-     logger.info("<<<<<< .  ER . >>>>>>> query value before #{@query}")
-     @query[':sql_value_last'] = LogStash::Timestamp.new(@value_tracker.value).to_s
-     logger.info("<<<<<< .  ER . >>>>>>> query value after #{@query}")
+    # #     LogStash::Timestamp.new(value)
+    #  logger.info("<<<<<< .  ER . >>>>>>> query value before #{@query}")
+    #  @query[':sql_value_last'] = LogStash::Timestamp.new(@value_tracker.value).to_s
+    #  logger.info("<<<<<< .  ER . >>>>>>> query value after #{@query}")
  
-    @base_query = LogStash::Json.load(@query)
-    if @slices
-      @base_query.include?('slice') && fail(LogStash::ConfigurationError, "Elasticsearch Input Plugin's `query` option cannot specify specific `slice` when configured to manage parallel slices with `slices` option")
-      @slices < 1 && fail(LogStash::ConfigurationError, "Elasticsearch Input Plugin's `slices` option must be greater than zero, got `#{@slices}`")
-    end
+    # @base_query = LogStash::Json.load(@query)
+    # if @slices
+    #   @base_query.include?('slice') && fail(LogStash::ConfigurationError, "Elasticsearch Input Plugin's `query` option cannot specify specific `slice` when configured to manage parallel slices with `slices` option")
+    #   @slices < 1 && fail(LogStash::ConfigurationError, "Elasticsearch Input Plugin's `slices` option must be greater than zero, got `#{@slices}`")
+    # end
 
     transport_options = {}
 
@@ -295,6 +295,19 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
   private
 
   def do_run(output_queue)
+
+    #     LogStash::Timestamp.new(value)
+    logger.info("<<<<<< ER >>>>>>> query value before #{@query}")
+    @query[':sql_value_last'] = LogStash::Timestamp.new(@value_tracker.value).to_s
+    logger.info("<<<<<< ER >>>>>>> query value after #{@query}")
+
+   @base_query = LogStash::Json.load(@query)
+   if @slices
+     @base_query.include?('slice') && fail(LogStash::ConfigurationError, "Elasticsearch Input Plugin's `query` option cannot specify specific `slice` when configured to manage parallel slices with `slices` option")
+     @slices < 1 && fail(LogStash::ConfigurationError, "Elasticsearch Input Plugin's `slices` option must be greater than zero, got `#{@slices}`")
+   end
+
+
     # if configured to run a single slice, don't bother spinning up threads
     return do_run_slice(output_queue) if @slices.nil? || @slices <= 1
 
