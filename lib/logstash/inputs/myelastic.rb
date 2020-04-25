@@ -299,7 +299,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
 
     #     LogStash::Timestamp.new(value)
     @query = @original_query
-    logger.info("<<<<<< ER >>>>>>> query value before #{@query}")
+    logger.info("<<<<<< ER >>>>>>> query value before #{@query} \n original #{original_query}")
     @query[':sql_value_last'] = LogStash::Timestamp.new(@value_tracker.value).to_s
     logger.info("<<<<<< ER >>>>>>> query value after #{@query}")
 
