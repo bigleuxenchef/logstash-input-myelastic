@@ -43,4 +43,4 @@ module LogStash module PluginMixins module Jdbc
       @driver.get_parent_logger
     end
   end
-end end end
+end

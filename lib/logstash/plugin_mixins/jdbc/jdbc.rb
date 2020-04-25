@@ -294,6 +294,6 @@ module LogStash  module PluginMixins module Jdbc
       end
     end
   end
-end end end
+end 
 
 

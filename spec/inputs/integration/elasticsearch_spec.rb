@@ -1,10 +1,10 @@
 # encoding: utf-8
 require "logstash/devutils/rspec/spec_helper"
 require "logstash/plugin"
-require "logstash/inputs/myelastic"
+require "logstash/inputs/elasticsearch"
 require_relative "../../../spec/es_helper"
 
-describe LogStash::Inputs::myelastic do
+describe LogStash::Inputs::elasticsearch do
 
   let(:config)   { { 'hosts' => [ESHelper.get_host_port],
                      'index' => 'logs',

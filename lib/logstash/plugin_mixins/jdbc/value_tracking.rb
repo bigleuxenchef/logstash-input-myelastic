@@ -136,4 +136,5 @@ module LogStash module PluginMixins module Jdbc
     def write(value)
     end
   end
-end end end
+end
+

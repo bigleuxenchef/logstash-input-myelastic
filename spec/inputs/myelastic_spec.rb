@@ -1,8 +1,8 @@
 # encoding: utf-8
 require "logstash/devutils/rspec/spec_helper"
 require "logstash/devutils/rspec/shared_examples"
-require "logstash/inputs/elasticsearch"
-require "myelastic"
+require "logstash/inputs/myelastic"
+require "elasticsearch"
 require "timecop"
 require "stud/temporary"
 require "time"
