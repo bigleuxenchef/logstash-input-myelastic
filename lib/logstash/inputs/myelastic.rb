@@ -208,7 +208,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
     end
     set_value_tracker(LogStash::PluginMixins::Jdbc::ValueTracking.build_last_value_tracker(self))
     logger.info("<<<<<< .  ER . >>>>>>> in build_last_value_tracker #{@value_tracker.value.to_s}")
-    @original_query = @query
+    @original_query = @query.clone
 #########
     @options = {
       :index => @index,
@@ -298,7 +298,7 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
   def do_run(output_queue)
 
     #     LogStash::Timestamp.new(value)
-    @query = @original_query
+    @query = @original_query.clone
     logger.info("<<<<<< ER >>>>>>> query value before #{@query} \n original #{@original_query}")
     @query[':sql_value_last'] = LogStash::Timestamp.new(@value_tracker.value).to_s
     logger.info("<<<<<< ER >>>>>>> query value after #{@query}")
