@@ -386,10 +386,10 @@ class LogStash::Inputs::Myelastic < LogStash::Inputs::Base
 
     #sql_last_value = get_column_value(event) #if @use_column_value
     #      yield extract_values_from(event)
-    logger.info("<<<<<< .  ER . >>>>>>>event.get(@tracking_column) #{event.get(@tracking_column)}") 
+    logger.info("<<<<<< .  ER . >>>>>>>event.get(@tracking_column) #{event.get(@tracking_column)} event.get(@tracking_column).respond_to?(:to_string) #{event.get(@tracking_column).respond_to?(:to_string)}") 
     sql_last_value = event.get(@tracking_column).respond_to?(:to_string)?event.get(@tracking_column):event.get(@tracking_column).to_iso8601
 
-    logger.info("<<<<<< .  ER . >>>>>>>sql_last_value #{sql_last_value} respond to to_iso8601 : #{sql_last_value.respond_to?(:to_iso8601)} timestamp : #{sql_last_value.respond_to?(:to_timestamp)} String :#{sql_last_value.respond_to?(:to_string)} numeric : #{sql_last_value.respond_to?(:to_numeric)}")
+    #logger.info("<<<<<< .  ER . >>>>>>>sql_last_value #{sql_last_value} respond to to_iso8601 : #{sql_last_value.respond_to?(:to_iso8601)} timestamp : #{sql_last_value.respond_to?(:to_timestamp)} String :#{sql_last_value.respond_to?(:to_string)} numeric : #{sql_last_value.respond_to?(:to_numeric)}")
     @value_tracker.set_value(sql_last_value)
 
   end
